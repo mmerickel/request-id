@@ -40,4 +40,9 @@ setup(
     ],
     packages=find_packages(),
     install_requires=install_requires,
+    entry_points={
+        'paste.filter_app_factory': [
+            'tracker = request_id:make_filter',
+        ],
+    },
 )
