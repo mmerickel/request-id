@@ -13,12 +13,11 @@ install_requires = [
 ]
 
 setup(
-    name='request_id',
+    name='request-id',
     version='0.1.0',
-    description='Attach a unique identifier to every request.',
+    description='Attach a unique identifier to every WSGI request.',
     long_description=README + '\n\n' + CHANGES,
     url='https://github.com/mmerickel/request_id',
-    license='MIT',
     author='Michael Merickel',
     author_email='michael@merickel.org',
     classifiers=[
@@ -28,12 +27,11 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP :: WSGI',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware',
@@ -42,7 +40,7 @@ setup(
     install_requires=install_requires,
     entry_points={
         'paste.filter_app_factory': [
-            'tracker = request_id:make_filter',
+            'main = request_id:make_filter',
         ],
     },
 )

@@ -7,34 +7,37 @@ from webob.dec import wsgify
 
 REQUEST_ID_KEY = 'X-Request-ID'
 
-def includeme(config):
-    config.add_request_method(get_request_id, 'id', property=True)
-
-def make_filter(app,
-                global_conf,
-                logger_name='wsgi',
-                logging_level=logging.INFO,
-                ):
+def make_filter(
+    app,
+    global_conf,
+    logging_level=logging.INFO,
+    **kw
+):
     if isinstance(logging_level, str):
         logging_level = logging._levelNames[logging_level]
-    return Tracker(
+    return RequestIdMiddleware(app, logging_level=logging_level, **kw)
+
+class RequestIdMiddleware(object):
+    default_format = (
+        '{REMOTE_ADDR} {HTTP_HOST} {REMOTE_USER} [{time}] '
+        '"{REQUEST_METHOD} {REQUEST_URI} {HTTP_VERSION}" '
+        '{status} {bytes} {duration} '
+        '"{HTTP_REFERER}" "{HTTP_USER_AGENT}" - {REQUEST_ID}'
+    )
+
+    def __init__(
+        self,
         app,
-        logger_name=logger_name,
-        logging_level=logging_level,
-    )
-
-class Tracker(object):
-    format = (
-        '%(REMOTE_ADDR)s %(HTTP_HOST)s %(REMOTE_USER)s [%(time)s] '
-        '"%(REQUEST_METHOD)s %(REQUEST_URI)s %(HTTP_VERSION)s" '
-        '%(status)s %(bytes)s %(duration)s '
-        '"%(HTTP_REFERER)s" "%(HTTP_USER_AGENT)s" - %(REQUEST_ID)s'
-    )
-
-    def __init__(self, app, logger_name='wsgi', logging_level=logging.INFO):
+        logger_name='request-id',
+        logging_level=logging.INFO,
+        format=None,
+        source_header=None,
+    ):
         self.app = app
         self.logger = logging.getLogger(logger_name)
         self.logging_level = logging_level
+        self.format = format or self.default_format
+        self.source_header = source_header
 
     @wsgify
     def __call__(self, request):
@@ -54,7 +57,11 @@ class Tracker(object):
         return response
 
     def track_request(self, request):
-        request_id = get_request_id(request)
+        request_id = get_request_id(request, header=self.source_header)
+        if request_id is None and self.source_header is not None:
+            self.logger.warn(
+                'could not find request id in header="%s"',
+                self.source_header)
 
         current_thread = threading.current_thread()
         current_thread.name = 'request=%s' % request_id
@@ -85,6 +92,7 @@ class Tracker(object):
             'REMOTE_USER': request.environ.get('REMOTE_USER') or '-',
             'REQUEST_METHOD': request.method,
             'REQUEST_URI': request.url,
+            'REQUEST_PATH': request.path_qs,
             'HTTP_HOST': request.host,
             'HTTP_VERSION': request.environ.get('SERVER_PROTOCOL'),
             'HTTP_REFERER': request.environ.get('HTTP_REFERER', '-'),
@@ -94,12 +102,15 @@ class Tracker(object):
             'bytes': bytes,
             'status': status,
         }
-        message = self.format % kw
+        message = self.format.format(**kw)
         self.logger.log(self.logging_level, message)
 
-def get_request_id(request):
+def get_request_id(request, header=None):
     request_id = request.environ.get(REQUEST_ID_KEY, None)
     if request_id is None:
-        request_id = str(uuid.uuid4())
+        if header is not None:
+            request_id = request.headers.get(header)
+        else:
+            request_id = str(uuid.uuid4())
         request.environ[REQUEST_ID_KEY] = request_id
     return request_id
