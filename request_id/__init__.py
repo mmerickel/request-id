@@ -5,17 +5,24 @@ import uuid
 
 from webob.dec import wsgify
 
+from .utils import aslist
+
 REQUEST_ID_KEY = 'X-Request-ID'
 
 def make_filter(
     app,
     global_conf,
     logging_level=logging.INFO,
+    exclude_prefixes='',
     **kw
 ):
     if isinstance(logging_level, str):
         logging_level = logging._levelNames[logging_level]
-    return RequestIdMiddleware(app, logging_level=logging_level, **kw)
+    exclude_prefixes = aslist(exclude_prefixes)
+
+    kw['exclude_prefixes'] = exclude_prefixes
+    kw['logging_level'] = logging_level
+    return RequestIdMiddleware(app, **kw)
 
 class RequestIdMiddleware(object):
     default_format = (
@@ -32,12 +39,14 @@ class RequestIdMiddleware(object):
         logging_level=logging.INFO,
         format=None,
         source_header=None,
+        exclude_prefixes=(),
     ):
         self.app = app
         self.logger = logging.getLogger(logger_name)
         self.logging_level = logging_level
         self.format = format or self.default_format
         self.source_header = source_header
+        self.exclude_prefixes = exclude_prefixes
 
     @wsgify
     def __call__(self, request):
@@ -45,13 +54,15 @@ class RequestIdMiddleware(object):
             start = time.time()
             response = self.track_request(request)
             duration = time.time() - start
-            self.write_log(
-                request,
-                time.localtime(start),
-                duration,
-                response.status_code,
-                response.content_length,
-            )
+            p = request.path_info
+            if not any(p.startswith(e) for e in self.exclude_prefixes):
+                self.write_log(
+                    request,
+                    time.localtime(start),
+                    duration,
+                    response.status_code,
+                    response.content_length,
+                )
         else:
             response = self.track_request(request)
         return response
