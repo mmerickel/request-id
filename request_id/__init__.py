@@ -28,7 +28,7 @@ class RequestIdMiddleware(object):
     def __init__(
         self,
         app,
-        logger_name='request-id',
+        logger_name='request_id',
         logging_level=logging.INFO,
         format=None,
         source_header=None,

@@ -40,6 +40,30 @@ filter::
   request-id
   myapp
 
+  [loggers]
+  keys = translogger
+
+  [handlers]
+  keys = translogger
+
+  [formatters]
+  keys = minimal
+
+  [logger_translogger]
+  level = INFO
+  handlers = translogger
+  qualname = request_id
+  propagate = 0
+
+  [handler_translogger]
+  class = StreamHandler
+  args = (sys.stderr,)
+  level = NOTSET
+  formatter = minimal
+
+  [formatter_minimal]
+  format = %(message)s
+
 Configure in code
 -----------------
 
@@ -77,7 +101,7 @@ Settings
 
 ``logger_name``
   The name of the Python stdlib logger to which the log output will be
-  delivered. Default: ``request-id``
+  delivered. Default: ``request_id``
 
 ``logging_level``
   The name of the Python stdlib logging level on which request information
@@ -102,10 +126,13 @@ Settings
   - ``bytes``
   - ``status``
 
+  Default: ``'{REMOTE_ADDR} {HTTP_HOST} {REMOTE_USER} [{time}] "{REQUEST_METHOD} {REQUEST_URI} {HTTP_VERSION}" {status} {bytes} {duration} "{HTTP_REFERER}" "{HTTP_USER_AGENT}" - {REQUEST_ID}``
+
 ``source_header``
   If not ``None`` then the ``request_id`` will be pulled from this header
   in the request. This is useful if another system upstream is setting a
   request identifier which you want to use in the WSGI application.
+  Default: ``None``
 
 Acknowledgements
 ----------------
