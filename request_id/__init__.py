@@ -13,12 +13,14 @@ def make_filter(
     app,
     global_conf,
     logging_level=logging.INFO,
-    exclude_prefixes='',
+    exclude_prefixes=None,
     **kw
 ):
     if isinstance(logging_level, str):
         logging_level = logging._levelNames[logging_level]
-    exclude_prefixes = aslist(exclude_prefixes)
+
+    if exclude_prefixes is not None:
+        exclude_prefixes = aslist(exclude_prefixes)
 
     kw['exclude_prefixes'] = exclude_prefixes
     kw['logging_level'] = logging_level
@@ -39,14 +41,14 @@ class RequestIdMiddleware(object):
         logging_level=logging.INFO,
         format=None,
         source_header=None,
-        exclude_prefixes=(),
+        exclude_prefixes=None,
     ):
         self.app = app
         self.logger = logging.getLogger(logger_name)
         self.logging_level = logging_level
         self.format = format or self.default_format
         self.source_header = source_header
-        self.exclude_prefixes = exclude_prefixes
+        self.exclude_prefixes = exclude_prefixes or []
 
     @wsgify
     def __call__(self, request):

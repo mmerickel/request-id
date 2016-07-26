@@ -134,6 +134,11 @@ Settings
   request identifier which you want to use in the WSGI application.
   Default: ``None``
 
+``exclude_prefixes``
+  A (space or line separated) list of URL paths to be ignored based on
+  ``request.path_info``. Paths should have a leading ``/`` in order to match
+  properly. Default: ``None``
+
 Acknowledgements
 ----------------
 
