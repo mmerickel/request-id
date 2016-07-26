@@ -107,4 +107,10 @@ Settings
   in the request. This is useful if another system upstream is setting a
   request identifier which you want to use in the WSGI application.
 
+Acknowledgements
+----------------
+
+This code is heavily based on the translogger middleware from `Paste`_.
+
 .. _PEP-3101: https://www.python.org/dev/peps/pep-3101/
+.. _Paste: http://pythonpaste.org/
