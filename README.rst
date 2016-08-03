@@ -37,8 +37,9 @@ filter::
   format = {status} {REQUEST_METHOD:<6} {REQUEST_PATH:<60} {REQUEST_ID}
 
   [pipeline:main]
-  request-id
-  myapp
+  pipeline =
+    request-id
+    myapp
 
   [loggers]
   keys = translogger
