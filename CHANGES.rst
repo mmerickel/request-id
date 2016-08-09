@@ -1,3 +1,9 @@
+0.2 (2016-08-09)
+================
+
+- Catch exceptions and return ``webob.exc.HTTPInternalServerError`` so
+  that a ``request_id`` may be attached to the response.
+
 0.1.2 (2016-07-26)
 ==================
 
