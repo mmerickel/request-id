@@ -4,6 +4,7 @@ import time
 import uuid
 
 from webob.dec import wsgify
+from webob.exc import HTTPInternalServerError
 
 from .utils import aslist
 
@@ -77,9 +78,17 @@ class RequestIdMiddleware(object):
                 self.source_header)
 
         current_thread = threading.current_thread()
-        current_thread.name = 'request=%s' % request_id
+        old_name = current_thread.name
+        try:
+            current_thread.name = 'request=%s' % request_id
 
-        response = request.get_response(self.app)
+            response = request.get_response(self.app)
+        except Exception:
+            self.logger.exception(
+                'unknown exception during request=%s', request_id)
+            response = HTTPInternalServerError()
+        finally:
+            current_thread.name = old_name
         response.headers[REQUEST_ID_KEY] = request_id
         return response
 
