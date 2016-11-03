@@ -14,7 +14,7 @@ install_requires = [
 
 setup(
     name='request-id',
-    version='0.2',
+    version='0.2.1',
     description='Attach a unique identifier to every WSGI request.',
     long_description=README + '\n\n' + CHANGES,
     url='https://github.com/mmerickel/request_id',
