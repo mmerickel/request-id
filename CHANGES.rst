@@ -1,3 +1,9 @@
+unreleased
+==========
+
+- Fix ``logging_level`` option on Python 3.
+  See https://github.com/mmerickel/request-id/pull/2
+
 0.2 (2016-08-09)
 ================
 
