@@ -18,7 +18,13 @@ def make_filter(
     **kw
 ):
     if isinstance(logging_level, str):
-        logging_level = logging._levelNames[logging_level]
+        try:
+            level_names = logging._nameToLevel
+        except AttributeError:
+            level_names = logging._levelNames
+        if logging_level not in level_names:
+            raise ValueError('Unknown logging level: %s' % logging_level)
+        logging_level = level_names[logging_level]
 
     if exclude_prefixes is not None:
         exclude_prefixes = aslist(exclude_prefixes)
