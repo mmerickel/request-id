@@ -99,14 +99,6 @@ class RequestIdMiddleware(object):
     def write_log(self, request, start, duration, status, bytes):
         if bytes is None:
             bytes = '-'
-        if time.daylight:
-            offset = time.altzone / 60 / 60 * -100
-        else:
-            offset = time.timezone / 60 / 60 * -100
-        if offset >= 0:
-            offset = '+%0.4d' % offset
-        elif offset < 0:
-            offset = '%0.4d' % offset
         kw = {
             'REQUEST_ID': get_request_id(request),
             'REMOTE_ADDR': request.client_addr or '-',
@@ -118,7 +110,7 @@ class RequestIdMiddleware(object):
             'HTTP_VERSION': request.environ.get('SERVER_PROTOCOL'),
             'HTTP_REFERER': request.environ.get('HTTP_REFERER', '-'),
             'HTTP_USER_AGENT': request.environ.get('HTTP_USER_AGENT', '-'),
-            'time': time.strftime('%d/%b/%Y:%H:%M:%S ', start) + offset,
+            'time': time.strftime('%d/%b/%Y:%H:%M:%S %z', start),
             'duration': '%.3f' % duration,
             'bytes': bytes,
             'status': status,
