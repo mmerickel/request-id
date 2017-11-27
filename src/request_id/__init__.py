@@ -6,8 +6,6 @@ import uuid
 from webob.dec import wsgify
 from webob.exc import HTTPInternalServerError
 
-from .utils import aslist
-
 REQUEST_ID_KEY = 'X-Request-ID'
 
 def make_filter(
@@ -137,3 +135,10 @@ def get_request_id(request, header=None):
             request_id = str(uuid.uuid4())
         request.environ[REQUEST_ID_KEY] = request_id
     return request_id
+
+def aslist(value):
+    """
+    Return a list of strings, separating the input based on newlines.
+
+    """
+    return filter(None, [x.strip() for x in value.splitlines()])
