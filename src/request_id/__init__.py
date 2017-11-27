@@ -109,14 +109,9 @@ class RequestIdMiddleware(object):
             offset = '+%0.4d' % offset
         elif offset < 0:
             offset = '%0.4d' % offset
-        remote_addr = '-'
-        if request.environ.get('HTTP_X_FORWARDED_FOR'):
-            remote_addr = request.environ['HTTP_X_FORWARDED_FOR']
-        elif request.environ.get('REMOTE_ADDR'):
-            remote_addr = request.environ['REMOTE_ADDR']
         kw = {
             'REQUEST_ID': get_request_id(request),
-            'REMOTE_ADDR': remote_addr,
+            'REMOTE_ADDR': request.client_addr or '-',
             'REMOTE_USER': request.environ.get('REMOTE_USER') or '-',
             'REQUEST_METHOD': request.method,
             'REQUEST_URI': request.url,
