@@ -1,0 +1,14 @@
+[run]
+parallel = true
+source =
+    request_id
+    tests
+
+[paths]
+source =
+    src/request_id
+    */site-packages/request_id
+
+[report]
+show_missing = true
+precision = 2
