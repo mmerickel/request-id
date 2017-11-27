@@ -75,8 +75,8 @@ class RequestIdMiddleware(object):
         return response
 
     def track_request(self, request):
-        request_id = get_request_id(request, header=self.source_header)
-        if request_id is None and self.source_header is not None:
+        request_id = get_request_id(request, _header=self.source_header)
+        if self.source_header is not None and request_id == '-':
             self.logger.warn(
                 'could not find request id in header="%s"',
                 self.source_header)
@@ -126,11 +126,11 @@ class RequestIdMiddleware(object):
         message = self.format.format(**kw)
         self.logger.log(self.logging_level, message)
 
-def get_request_id(request, header=None):
+def get_request_id(request, _header=None):
     request_id = request.environ.get(REQUEST_ID_KEY, None)
     if request_id is None:
-        if header is not None:
-            request_id = request.headers.get(header)
+        if _header is not None:
+            request_id = request.headers.get(_header, '-')
         else:
             request_id = str(uuid.uuid4())
         request.environ[REQUEST_ID_KEY] = request_id
