@@ -32,8 +32,8 @@ def test_source_header(caplog):
     app.get('/', headers={
         'src-req-id': 'fooreqid',
     })
-    msg = [tup[2] for tup in caplog.record_tuples if tup[0] == 'request_id'][0]
-    assert 'fooreqid' in msg
+    rec = [rec for rec in caplog.records if rec.name == 'request_id'][0]
+    assert 'fooreqid' in rec.message
 
 def test_exclude_prefixes(caplog):
     wrapped_app = request_id.make_filter(
@@ -42,5 +42,5 @@ def test_exclude_prefixes(caplog):
     )
     app = webtest.TestApp(wrapped_app)
     app.get('/foo/bar/baz')
-    msgs = [tup[2] for tup in caplog.record_tuples if tup[0] == 'request_id']
-    assert len(msgs) == 0
+    records = [rec for rec in caplog.records if rec.name == 'request_id']
+    assert len(records) == 0
