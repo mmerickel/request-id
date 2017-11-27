@@ -1,6 +1,12 @@
 request-id
 ==========
 
+.. image:: https://img.shields.io/pypi/v/request-id.svg
+    :target: https://pypi.python.org/pypi/request-id
+
+.. image:: https://img.shields.io/travis/mmerickel/request-id/master.svg
+    :target: https://travis-ci.org/mmerickel/request-id
+
 Attach a unique identifier to every request in your WSGI application.
 
 ``request-id`` is implemented as a WSGI middleware.
