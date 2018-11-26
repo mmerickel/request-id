@@ -1,3 +1,9 @@
+1.0 (2018-11-26)
+================
+
+- Fix a bug in ``exclude_prefixes`` where it only matches the first request
+  on Python 3.
+
 0.3.1 (2017-11-26)
 ==================
 

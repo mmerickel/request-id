@@ -13,14 +13,13 @@ install_requires = [
 
 tests_require = [
     'pytest',
-    'pytest-catchlog',
     'pytest-cov',
     'WebTest',
 ]
 
 setup(
     name='request-id',
-    version='0.3.1',
+    version='1.0',
     description='Attach a unique identifier to every WSGI request.',
     long_description=readme + '\n\n' + changes,
     url='https://github.com/mmerickel/request_id',
@@ -38,6 +37,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Internet :: WWW/HTTP :: WSGI',
         'Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware',
     ],

@@ -77,7 +77,7 @@ class RequestIdMiddleware(object):
     def track_request(self, request):
         request_id = get_request_id(request, _header=self.source_header)
         if self.source_header is not None and request_id == '-':
-            self.logger.warn(
+            self.logger.warning(
                 'could not find request id in header="%s"',
                 self.source_header)
 
@@ -133,4 +133,4 @@ def aslist(value):
     Return a list of strings, separating the input based on newlines.
 
     """
-    return filter(None, [x.strip() for x in value.splitlines()])
+    return list(filter(None, [x.strip() for x in value.splitlines()]))

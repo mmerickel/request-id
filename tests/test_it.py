@@ -30,6 +30,7 @@ def test_disabled_via_log_level(caplog):
     assert len(records) == 0
 
 def test_header_in_message(caplog):
+    caplog.set_level(logging.INFO)
     wrapped_app = request_id.make_filter(dummy_app1, {})
     app = webtest.TestApp(wrapped_app)
     response = app.get('/')
@@ -38,6 +39,7 @@ def test_header_in_message(caplog):
     assert 'request={}'.format(xrid) in rec.threadName
 
 def test_source_header(caplog):
+    caplog.set_level(logging.INFO, logger='request_id')
     wrapped_app = request_id.make_filter(
         dummy_app1, {},
         source_header='src-req-id',
@@ -50,6 +52,7 @@ def test_source_header(caplog):
     assert 'fooreqid' in rec.message
 
 def test_source_header_missing(caplog):
+    caplog.set_level(logging.INFO, logger='request_id')
     wrapped_app = request_id.make_filter(
         dummy_app1, {},
         source_header='src-req-id',
@@ -60,11 +63,13 @@ def test_source_header_missing(caplog):
     assert 'could not find request id in header' in rec.message
 
 def test_exclude_prefixes(caplog):
+    caplog.set_level(logging.INFO, logger='request_id')
     wrapped_app = request_id.make_filter(
         dummy_app1, {},
         exclude_prefixes='/foo/',
     )
     app = webtest.TestApp(wrapped_app)
+    app.get('/foo/bar/baz')
     app.get('/foo/bar/baz')
     records = filter_records(caplog.records, 'request_id')
     assert len(records) == 0
