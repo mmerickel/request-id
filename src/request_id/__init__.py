@@ -8,6 +8,7 @@ from webob.exc import HTTPInternalServerError
 
 REQUEST_ID_KEY = 'X-Request-ID'
 
+
 def make_filter(
     app,
     global_conf,
@@ -30,6 +31,7 @@ def make_filter(
     kw['exclude_prefixes'] = exclude_prefixes
     kw['logging_level'] = logging_level
     return RequestIdMiddleware(app, **kw)
+
 
 class RequestIdMiddleware(object):
     default_format = (
@@ -119,6 +121,7 @@ class RequestIdMiddleware(object):
         message = self.format.format(**kw)
         self.logger.log(self.logging_level, message)
 
+
 def get_request_id(request, _header=None):
     request_id = request.environ.get(REQUEST_ID_KEY, None)
     if request_id is None:
@@ -128,6 +131,7 @@ def get_request_id(request, _header=None):
             request_id = str(uuid.uuid4())
         request.environ[REQUEST_ID_KEY] = request_id
     return request_id
+
 
 def aslist(value):
     """
