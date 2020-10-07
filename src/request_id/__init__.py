@@ -57,21 +57,22 @@ class RequestIdMiddleware(object):
 
     @wsgify
     def __call__(self, request):
-        if self.logger.isEnabledFor(self.logging_level):
-            start = time.time()
-            response = self.track_request(request)
-            duration = time.time() - start
-            p = request.path_info
-            if not any(p.startswith(e) for e in self.exclude_prefixes):
-                self.write_log(
-                    request,
-                    time.localtime(start),
-                    duration,
-                    response.status_code,
-                    response.content_length,
-                )
-        else:
-            response = self.track_request(request)
+        # capture path_info before track_request incase it is mutated later
+        path = request.path_info
+        start = time.time()
+        response = self.track_request(request)
+        duration = time.time() - start
+        if (
+            self.logger.isEnabledFor(self.logging_level)
+            and not any(path.startswith(e) for e in self.exclude_prefixes)
+        ):
+            self.write_log(
+                request,
+                time.localtime(start),
+                duration,
+                response.status_code,
+                response.content_length,
+            )
         return response
 
     def track_request(self, request):
