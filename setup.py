@@ -19,7 +19,7 @@ tests_require = [
 
 setup(
     name='request-id',
-    version='1.0',
+    version='1.0.1',
     description='Attach a unique identifier to every WSGI request.',
     long_description=readme + '\n\n' + changes,
     url='https://github.com/mmerickel/request_id',

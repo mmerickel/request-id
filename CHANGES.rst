@@ -1,3 +1,10 @@
+1.0.1 (2020-10-06)
+==================
+
+- Fix a bug in which ``exclude_prefixes`` was not matching in cases where
+  the ``PATH_INFO`` in the WSGI ``environ`` was mutated while processing the
+  request.
+
 1.0 (2018-11-26)
 ================
 
